@@ -1,0 +1,5 @@
+dist/
+*.AppImage
+*.tar.zst
+kit/crater-kit/payload/appimage.part*
+kit/crater-kit/reports/

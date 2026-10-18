@@ -1,0 +1,24 @@
+CRATER PS2 KIT @VERSION@  -  PlayStation 2 (ARMSX2) for Batocera 43 on Raspberry Pi 5
+==================================================================================
+
+INSTALL / REPAIR (no SSH needed)
+  1. Copy these TWO files into  \\BATOCERA\share\roms\ports\
+       - Crater - Install or Repair PS2.sh     (take it out of this zip)
+       - Crater-PS2-Kit-@VERSION@.zip               (this zip itself - do NOT unzip it)
+  2. On the Pi: Ports -> "Crater - Install or Repair PS2". Takes about 1-2 minutes.
+  3. The menu restarts by itself. "PlayStation 2" appears in the system list.
+
+  Run it again any time PS2 breaks (after a failed update, deleted files, etc.).
+  It always does a clean reinstall. Games, BIOS, saves and settings are not touched.
+
+YOU STILL NEED (your own dumps)
+  PS2 BIOS  -> \\BATOCERA\share\bios\ps2\   (e.g. SCPH-70012.bin)
+  PS2 games -> \\BATOCERA\share\roms\ps2\   (.iso or .chd, NOT zipped)
+
+IF IT FAILS
+  The screen / log says why:  \\BATOCERA\share\system\logs\crater-kit.log
+  "zip is incomplete"  -> copy the zip again (the network copy was cut off)
+  "SHARE is not mounted" -> the card needs repair first (see earlier notes)
+
+REMOVE PS2:  over SSH  bash /userdata/system/armsx2/uninstall.sh
+Only for Batocera 43.x. After a Batocera 44 update the installer may refuse on purpose.

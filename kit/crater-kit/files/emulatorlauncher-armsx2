@@ -1,0 +1,58 @@
+#!/usr/bin/python
+# -*- coding: utf-8 -*-
+# Crater PS2 kit - emulatorlauncher wrapper for PS2 on Batocera 43 (Raspberry Pi 5).
+#
+# Batocera 43 ships no PS2 emulator for bcm2712 and its configgen has no "armsx2" generator
+# (upstream only enables ARMSX2 for Qualcomm boards, on the newer batocera-launch code).
+# Instead of patching the read-only rootfs, this wrapper runs the stock configgen and:
+#   1. adds /userdata/system/armsx2/configgen to configgen.generators' package path, so
+#      get_generator('armsx2') finds generators/armsx2/armsx2Generator.py by its normal
+#      naming convention (no files in /usr are modified);
+#   2. makes "armsx2" the PS2 default instead of the x86-only "pcsx2";
+#   3. points the libretro generator at /userdata/system/armsx2/libretro for the PS2 core.
+# Everything else (controllers, hotkeygen, evmapy, bezels, video modes) is stock Batocera.
+import re
+import sys
+from pathlib import Path
+
+KIT = Path("/userdata/system/armsx2")
+
+import configgen.generators as _generators  # noqa: E402
+
+_ext = str(KIT / "configgen")
+if _ext not in _generators.__path__:
+    _generators.__path__.append(_ext)
+
+import configgen.Emulator as _emulator  # noqa: E402
+
+_orig_load_system_config = _emulator._load_system_config
+
+
+def _load_system_config(system_name, /):
+    data = _orig_load_system_config(system_name)
+    if system_name == "ps2":
+        if data.get("emulator") in (None, "", "pcsx2", "play"):
+            data["emulator"] = "armsx2"
+            data["core"] = "armsx2"
+        # only read by the libretro path: the ARMSX2 core needs Vulkan on V3D (GL is 3.1)
+        data.setdefault("gfxbackend", "vulkan")
+    return data
+
+
+_emulator._load_system_config = _load_system_config
+
+try:
+    import configgen.generators.libretro.libretroGenerator as _lr  # noqa: E402
+
+    _lr.RETROARCH_CORES = KIT / "libretro"
+    # the generator refuses cores without /usr/share/libretro/info/<core>_libretro.info;
+    # RETROARCH_SHARE is only used for that check, so point it at the kit's info file
+    _lr.RETROARCH_SHARE = KIT / "libretro-share"
+except Exception as exc:  # libretro path is optional; standalone ARMSX2 is the default
+    print(f"[crater] libretro core path not patched: {exc}", file=sys.stderr)
+
+from configgen.emulatorlauncher import launch  # noqa: E402
+
+if __name__ == "__main__":
+    sys.argv[0] = re.sub(r"(-script\.pyw|\.exe)?$", "", sys.argv[0])
+    sys.exit(launch())

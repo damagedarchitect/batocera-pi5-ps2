@@ -1,0 +1,6 @@
+* text=auto
+*.sh text eol=lf
+*.in text eol=lf
+*.py text eol=lf
+*.cfg text eol=lf
+kit/crater-kit/files/emulatorlauncher-armsx2 text eol=lf

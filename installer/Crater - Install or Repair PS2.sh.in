@@ -1,0 +1,137 @@
+#!/bin/bash
+# =====================================================================================
+#  Crater PS2 installer / repair for Batocera 43.x on Raspberry Pi 5   (kit @VERSION@)
+#
+#  HOW TO USE
+#    1. Copy BOTH files into the Ports folder  \\BATOCERA\share\roms\ports\
+#         - Crater - Install or Repair PS2.sh   (this script)
+#         - Crater-PS2-Kit-@VERSION@.zip         (leave it zipped)
+#    2. On the Pi: Ports -> "Crater - Install or Repair PS2"  (about 1-2 minutes)
+#    3. The menu restarts by itself; "PlayStation 2" is in the system list.
+#
+#  Safe to run again at any time: clean reinstall of the emulator and its settings.
+#  PS2 games, BIOS, saves and per-game options are never touched.
+#  Log: /userdata/system/logs/crater-kit.log
+#  Over SSH:   bash "/userdata/roms/ports/Crater - Install or Repair PS2.sh"
+#  Remove PS2: bash /userdata/system/armsx2/uninstall.sh   (keeps saves/BIOS/games)
+# =====================================================================================
+KIT_VERSION="@VERSION@"
+SELF=$(readlink -f "$0")
+LOG=/userdata/system/logs/crater-kit.log
+SRC=/userdata/system/.crater-kit-src
+
+# ---- show the progress on the TV when a terminal is available (Ports have no screen of their own)
+if [ "${1:-}" != "--inner" ] && [ -z "${CRATER_NO_TERM:-}" ] && command -v xterm >/dev/null 2>&1; then
+    export DISPLAY=${DISPLAY:-:0}
+    rm -f /tmp/crater-installer.started
+    xterm -fullscreen -fa Monospace -fs 15 -bg black -fg white -T "Crater PS2 installer" \
+        -e bash "$SELF" --inner
+    rc=$?
+    # xterm could not open (no display): run without it
+    [ -e /tmp/crater-installer.started ] && exit $rc
+fi
+
+touch /tmp/crater-installer.started
+mkdir -p /userdata/system/logs 2>/dev/null
+say()  { echo "[$(date '+%T')] $*" | tee -a "$LOG"; }
+note() { curl -s -m 3 http://127.0.0.1:1234/notify -d "$1" >/dev/null 2>&1; }
+fail() {
+    say "FAILED: $*"
+    say "Your games, BIOS and saves are untouched. Fix the problem above and run this again."
+    note "Crater PS2 install FAILED: $*"
+    rm -rf "$SRC"
+    sleep 25; exit 1
+}
+
+clear 2>/dev/null
+echo "=================================================================="
+echo "  Crater PS2 installer / repair  -  kit $KIT_VERSION"
+echo "=================================================================="
+say "===== Ports installer start ($SELF) ====="
+
+# ---- 1. sanity checks ----------------------------------------------------------------------
+[ "$(id -u)" = 0 ] || fail "must run as root (Batocera Ports and SSH already do)"
+grep -qsE "^[^ ]+ /userdata tmpfs " /proc/mounts && \
+    fail "SHARE is not mounted (Batocera is running on its RAM fallback). Repair the card first."
+[ "$(cat /boot/boot/batocera.board 2>/dev/null)" = "bcm2712" ] || say "WARNING: built for Raspberry Pi 5 (bcm2712)"
+grep -q '^43' /usr/share/batocera/batocera.version 2>/dev/null || \
+    say "WARNING: built for Batocera 43.x - this is $(cat /usr/share/batocera/batocera.version 2>/dev/null)"
+free_mb=$(df -Pm /userdata | awk 'NR==2{print $4}')
+[ "${free_mb:-0}" -ge 800 ] || fail "only ${free_mb} MB free on SHARE, need 800 MB"
+for t in sha256sum unsquashfs zstd python3 curl; do
+    command -v $t >/dev/null 2>&1 || fail "system tool '$t' missing - is this really Batocera?"
+done
+
+# ---- 2. find the kit zip (next to this script first, then anywhere on SHARE) ----------------
+here=$(dirname "$SELF")
+ZIP=$(ls -1t "$here"/Crater-PS2-Kit-*.zip 2>/dev/null | head -1)
+[ -n "$ZIP" ] || ZIP=$(find /userdata/roms/ports /userdata /userdata/system /userdata/roms -maxdepth 1 \
+                        -name 'Crater-PS2-Kit-*.zip' 2>/dev/null | head -1)
+[ -n "$ZIP" ] || fail "Crater-PS2-Kit-...zip not found - copy it into roms/ports next to this script"
+say "kit: $ZIP"
+
+# ---- 3. check the zip arrived complete (CRC of every file), then unpack ---------------------
+rm -rf "$SRC"; mkdir -p "$SRC" || fail "cannot create $SRC"
+say "checking and unpacking the kit..."
+python3 -I - "$ZIP" "$SRC" <<'PYZ' || fail "the zip is incomplete or corrupted - copy it to roms/ports again"
+import sys, zipfile
+z = zipfile.ZipFile(sys.argv[1])
+bad = z.testzip()
+if bad: sys.exit("corrupted entry: " + bad)
+for i in z.infolist():
+    if i.filename.startswith("/") or ".." in i.filename.split("/"): sys.exit("unsafe path in zip")
+z.extractall(sys.argv[2])
+PYZ
+KITDIR="$SRC/crater-kit"
+[ -f "$KITDIR/install.sh" ] || fail "kit zip has no crater-kit/install.sh"
+[ "$(tr -d '\n' < "$KITDIR/VERSION")" = "$KIT_VERSION" ] || \
+    KIT_VERSION=$(tr -d '\n' < "$KITDIR/VERSION")
+say "unpacked kit $KIT_VERSION"
+
+# ---- 4. install (clean reinstall every time) -------------------------------------------------
+rm -f /userdata/system/logs/crater-kit.failed
+say "installing ARMSX2 + Batocera integration (about a minute)..."
+CRATER_NO_ES_RESTART=1 CRATER_KIT="$KITDIR" bash "$KITDIR/install.sh" || true
+[ "$(cat /userdata/system/armsx2/.installed 2>/dev/null)" = "$KIT_VERSION" ] && \
+    [ -x /userdata/system/armsx2/app/usr/bin/armsx2-qt ] || \
+    fail "install did not complete - see the lines above / $LOG"
+cp -f "$KITDIR/uninstall.sh" /userdata/system/armsx2/uninstall.sh 2>/dev/null
+chmod 755 /userdata/system/armsx2/uninstall.sh 2>/dev/null
+
+# ---- 5. refresh the boot copy so the boot-time self-repair uses this same version -------------
+boot_free=$(df -Pm /boot | awk 'NR==2{print $4}')
+old_kb=$(du -sk /boot/crater-kit 2>/dev/null | cut -f1); old_mb=$(( ${old_kb:-0} / 1024 ))
+need_mb=$(( $(du -sm "$KITDIR" | cut -f1) + 5 ))
+if [ $(( ${boot_free:-0} + old_mb )) -ge "$need_mb" ] && mount -o remount,rw /boot 2>/dev/null; then
+    reports=""
+    [ -d /boot/crater-kit/reports ] && reports=$(mktemp -d) && cp -a /boot/crater-kit/reports/. "$reports"/
+    rm -rf /boot/crater-kit.new && cp -a "$KITDIR" /boot/crater-kit.new && \
+        rm -rf /boot/crater-kit && mv /boot/crater-kit.new /boot/crater-kit && \
+        cp -f "$SRC/preshare.sh" /boot/preshare.sh && say "boot self-repair hook updated"
+    [ -n "$reports" ] && mkdir -p /boot/crater-kit/reports && cp -a "$reports"/. /boot/crater-kit/reports/ && rm -rf "$reports"
+    sync; mount -o remount,ro /boot
+else
+    say "note: boot partition not updated (not enough room) - PS2 is installed anyway"
+fi
+rm -rf "$SRC"
+sync
+
+# ---- 6. restart the menu once this Port has exited, so PlayStation 2 shows up ----------------
+setsid bash -c '
+    for _ in $(seq 1 120); do
+        [ "$(batocera-es-swissknife --emupid 2>/dev/null | head -1)" = "0" ] && break; sleep 1
+    done
+    sleep 2
+    curl -s -m 3 http://127.0.0.1:1234/notify -d "Crater: PlayStation 2 ready" >/dev/null 2>&1
+    sleep 2
+    curl -s -m 5 http://127.0.0.1:1234/restart >/dev/null 2>&1
+' </dev/null >/dev/null 2>&1 &
+
+echo
+echo "=================================================================="
+say  "DONE - PlayStation 2 (ARMSX2 $KIT_VERSION) is installed."
+echo "  The menu restarts in a few seconds after this screen closes."
+echo "  Games: \\\\BATOCERA\\share\\roms\\ps2    BIOS: \\\\BATOCERA\\share\\bios\\ps2"
+echo "=================================================================="
+sleep 8
+exit 0
