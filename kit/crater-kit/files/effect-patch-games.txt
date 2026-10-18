@@ -1,0 +1,159 @@
+Crater PS2 toolkit - games with EFFECT REMOVAL PATCHES (from ARMSX2 nightly 20261011 patches.zip)
+Turn on: game -> Advanced options -> PERFORMANCE TOOLKIT -> Effect removal patches = On (or any profile).
+Your dump must be the same version (serial + CRC). CRC shows in the emulator log when a game starts.
+
+TITLE                                                SERIAL      CRC       PATCHES
+Armored Core - Last Raven                            SLES-53820  B1A38C05  Remove Blur
+Armored Core - Last Raven                            SLUS-21338  1F34E107  Remove Blur
+Armored Core - Nexus [Disc 1]                        SLES-82036  F3A5EC6F  Remove Blur
+Armored Core - Nexus [Disc 1]                        SLUS-20986  7E5F690C  Remove Blur
+Armored Core - Nexus [Disc 2]                        SLES-82037  F3A5EC6F  Remove Blur
+Armored Core - Nexus [Disc 2]                        SLUS-21079  7E5F690C  Remove Blur
+Armored Core - Nine Breaker                          SLES-53819  98BE10F8  Remove Blur
+Armored Core - Nine Breaker                          SLUS-21200  72486978  Remove Blur
+Black                                                SLES-53886  ADDFF505  No Blur While Reload
+Black                                                SLES-54030  CAA04879  No Blur While Reload
+BLACK                                                SLPM-66354  B3A9F9ED  No Blur While Reload
+Black                                                SLUS-21376  5C891FF1  No Blur While Reload
+Bully                                                SLPS-25879  019CFA48  Disable Depth of Field
+Bully                                                SLUS-21269  28703748  Disable Depth of Field
+Burnout                                              SLUS-20307  4783F7ED  Disable Depth of Field
+Burnout 3 - Takedown                                 SLUS-21050  BEBF8793  Disable Motion Blur, Disable Bloom
+Burnout Revenge                                      SLUS-21242  D224D348  Disable Motion Blur, Disable Bloom
+Canis Canem Edit                                     SLES-53561  C78A495D  Disable Depth of Field
+Castleween                                           SLES-51249  EE3BCA71  Disable Blur
+Dark Cloud 2                                         SCUS-97213  1DF41F33  Disable Depth of Field
+Devil May Cry                                        SLUS-20216  79B8A95F  Disable blur
+Disney/Pixar Cars                                    SLUS-21151  F2A25D7B  Disable Blur/Bloom
+Dog's Life                                           SCES-51248  531061F2  Disable Blur
+Dog's Life                                           SLUS-21018  35CB5180  Disable Blur
+Driven                                               SLES-50390  250353F1  Remove blur
+Echo Night - Beyond                                  SLES-53414  BBF8C3D6  Performance Fix
+Echo Night - Beyond                                  SLES-53414  E078914A  Performance Fix
+Echo Night - Beyond                                  SLUS-20928  2DE16D21  Performance Fix
+Fahrenheit                                           SLES-53539  8F96D103  Remove Blur/Bloom
+Fahrenheit                                           SLES-53540  8191D10A  Remove Blur/Bloom
+Fatal Frame                                          SLUS-20388  339A0B8C  Disable Blurry Bloom effect, Disable Post-Process and Noise effect
+Fatal Frame II - Crimson Butterfly                   SLUS-20766  1C6C1B71  Disable Dither effect
+Fatal Frame II - Crimson Butterfly                   SLUS-20766  9A51B627  Disable Dither effect
+Fatal Frame III - The Tormented                      SLUS-21244  2ADBA7BC  Disable Dither & Ghost Post-Process effect, Disable Overbloom on Cutscenes, Decrease Overbloom on Gameplay, Disable Focus effect, Disable All Bloom
+Grand Theft Auto - San Andreas                       SLES-52541  A1B3F232  Remove Ghosting Effects, Remove Color Filter
+Grand Theft Auto - San Andreas                       SLES-52541  B440A8FE  Remove Ghosting Effects, Remove Color Filter
+Grand Theft Auto - San Andreas                       SLES-52927  A3EF1321  Remove Ghosting Effects, Remove Color Filter
+Grand Theft Auto - San Andreas                       SLES-52927  B61F872C  Remove Ghosting Effects, Remove Color Filter
+Grand Theft Auto - San Andreas                       SLUS-20946  2C6BE434  Remove Ghosting Effects, Remove Color Filter
+Grand Theft Auto - San Andreas                       SLUS-20946  399A49CA  Remove Ghosting Effects, Remove Color Filter
+Grand Theft Auto III                                 SLES-50330  021396FD  Remove Blur
+Grand Theft Auto III                                 SLES-50330  581954FC  Remove Blur
+Grand Theft Auto III                                 SLUS-20062  5E115FB6  Remove Blur
+Gun                                                  SLES-53523  98D7BF5E  Remove Bloom
+Gun                                                  SLES-53647  98D7BF5E  Remove Bloom
+Harry Potter and the Order of the Phoenix            SLES-54779  01A9BF0E  Remove Blur/Bloom
+Harry Potter and the Order of the Phoenix            SLUS-21619  4C01B1B0  Remove Blur/Bloom
+Harry Potter and the Prisoner of Azkaban             SLES-52440  51E019BC  Remove Blur/Bloom
+Harry Potter and the Prisoner of Azkaban             SLUS-20926  51E019BC  Remove Blur/Bloom
+Headhunter - Redemption                              SLES-52512  2D24ABAD  Disable Blur
+Headhunter - Redemption                              SLUS-20817  2F5EB1FF  Disable Blur
+Ico                                                  SCES-50760  5C991F4E  Disable Motion Blur, Disable Post-Effects, No Shadow Effects
+Indigo Prophecy                                      SLUS-21196  A7A37EB8  Remove Blur/Bloom
+Killzone                                             SCES-52004  6624A78C  Disable Noise Effect
+Killzone                                             SCUS-97402  CAAEC49C  Disable Noise Filter
+King's Field IV                                      SLES-50920  401F4726  Remove Scanmask Blur
+King's Field IV - The Ancient City                   SLUS-20318  36E02E91  Remove Scanmask Blur
+Midnight Club 3 - DUB Edition                        SLES-52942  EBE1972D  Remove Bloom
+Midnight Club 3 - DUB Edition Remix                  SLES-53717  208183AF  Remove Bloom
+Midnight Club 3 - DUB Edition Remix                  SLUS-21355  60A42FF5  Disable motion blur
+NEBULA -ECHO NIGHT-                                  SLPS-25314  B6AA81EE  Performance Fix
+Need for Speed - Carbon                              SLES-54322  CF36D003  Remove Blur/Bloom
+Need for Speed - Carbon                              SLES-54323  4078F8F1  Remove Blur/Bloom
+Need for Speed - Carbon                              SLES-54324  26DFEE66  Remove Blur/Bloom
+Need for Speed - Carbon                              SLUS-21493  7841A89E  Remove Blur/Bloom
+Need for Speed - Carbon [Collector's Edition]        SLES-54402  2BB7BA40  Remove Blur/Bloom
+Need for Speed - Carbon [Collector's Edition]        SLES-54492  C2909885  Remove Blur/Bloom
+Need for Speed - Most Wanted                         SLES-53557  692CBA8E  Remove Blur
+Need for Speed - Most Wanted                         SLES-53559  CA2A1B04  Remove Blur
+Need for Speed - Most Wanted                         SLUS-21267  270F8C03  Remove Blur
+Need for Speed - Most Wanted [Black Edition]         SLES-53857  805C3B3A  Disable All Post-processing, Disable Bloom, Disable Motion Blur Effect, No Distant Fog
+Need for Speed - Most Wanted [Black Edition]         SLUS-21351  0518D274  Disable All Post-processing, Disable Bloom, Disable Motion Blur Effect, No Distant Fog
+Need for Speed - Undercover                          SLES-55351  422281E6  Remove Blur
+Need for Speed - Undercover                          SLES-55353  A2BFF202  Remove Blur
+Need for Speed - Underground                         SLES-51967  FDA10318  Remove Blur/Bloom
+Need for Speed - Underground                         SLUS-20811  CB99CD12  Remove blur
+Need for Speed - Underground 2                       SLES-52725  0197EBD0  Remove Blur/Bloom
+Need for Speed - Underground 2                       SLES-52725  CFB873AD  Remove Blur/Bloom
+Need for Speed - Underground 2                       SLUS-21065  F5C7B45F  Disable Fog, Disable Motion Blur Effect, Remove Bloom
+Okami                                                SLES-54439  891F223F  Disable post-processing effect
+Okami                                                SLUS-21115  21068223  Disable post-processing effect
+Prince of Persia - The Sands of Time                 SLES-51918  4B58A7A8  Remove Blur/Bloom
+Prince of Persia - The Sands of Time                 SLUS-20743  7F6EB3D0  Remove Blur/Bloom
+Prince of Persia - The Two Thrones                   SLES-53777  6FC40BAA  Remove Blur/Bloom
+Prince of Persia - The Two Thrones                   SLUS-21287  84F3309D  Remove Blur/Bloom
+Prince of Persia - Warrior Within                    SLUS-21022  6B17B39F  Remove Blur/Bloom
+Project - Snowblind                                  SLES-53124  821A0C40  Remove Blur/Bloom
+Project - Snowblind                                  SLUS-21037  2BDA8ADB  Disable Blur/Bloom
+Project - Snowblind                                  SLUS-21037  7849F069  Disable Blur/Bloom
+Project Zero                                         SLES-50821  22E91837  Disable Blurry Bloom effect, Disable Post-Process and Noise effect - gameplay, Disable Post-Process and Noise effect - menus
+Project Zero 3 - The Tormented                       SLES-53825  23B754F4  Disable Overbloom on Cutscenes
+Project Zero II - Crimson Butterfly                  SLES-52384  9D8206D3  Disable Dither effect
+Project Zero II - Crimson Butterfly                  SLES-52384  9D87F3AF  Disable Dither effect
+Shin Megami Tensei - Digital Devil Saga              SLUS-20974  D7273511  No Motion Blur, No Radial Blur
+Silent Hill - Origins                                SLES-55147  DC180A6B  No Noise Filter
+Silent Hill - Origins                                SLUS-21731  A8D83239  No Noise Filter
+Silent Hill - Shattered Memories                     SLES-55569  492CB73E  No Noise Filter
+Silent Hill - Shattered Memories                     SLUS-21899  61A7E622  No Noise Filter
+Silent Hill 2                                        SLES-50382  6B149273  Disable Noise Effect
+Silent Hill 2                                        SLUS-20228  FE06A030  No Noise Filter
+Silent Hill 2 - Director's Cut                       SLES-51156  6BBD4932  Disable Noise Effect
+Sly 2 - Band of Thieves                              SCES-52529  15DD1F6F  No Motion Blur
+Sly 2 - Band of Thieves                              SCES-52529  FDA1CBF6  No Motion Blur
+Sly 2 - Band of Thieves                              SCUS-97316  07652DD9  No Motion Blur
+Sly 2 - Band of Thieves                              SCUS-97316  FDA1CBF6  No Motion Blur
+Sly 2 - Band of Thieves [E3 Demo]                    SCUS-97415  5B93397F  No Motion Blur
+Sly 3 - Honor Among Thieves                          SCUS-97464  8BC95883  No Motion Blur
+Sly 3 - Honor Among Thieves [E3 Demo]                SCUS-97484  3130A4D3  No Motion Blur
+Sly 3 - Honor Among Thieves [Regular Demo]           SCUS-97527  35CCFA60  No Motion Blur
+Sly 3 - Honour Among Thieves                         SCES-53409  8164C614  No Motion Blur
+Sly Cooper and the Thievius Raccoonus                SCUS-97198  C77AF2CA  No Motion Blur
+Sly Cooper and the Thievius Raccoonus [Demo]         SCUS-97210  EF7F0CE6  No Motion Blur
+Sly Raccoon                                          SCES-50917  DA3DD765  No Motion Blur
+Sniper Elite                                         SLES-51820  EF47C233  Remove Blur/Bloom
+Spawn - Armageddon                                   SLES-52326  8C9BF4F9  Remove Blur/Bloom
+Spawn - Armageddon                                   SLUS-20707  B7E7D66F  Remove Blur/Bloom
+SSX 3                                                SLES-51697  2326C5C8  Fix Metro Slowdown
+SSX 3                                                SLES-51697  CE942B2A  Fix Metro Slowdown
+SSX 3                                                SLUS-20772  08FFF00D  Fix Metro Slowdown
+Star Wars - Battlefront                              SLES-52545  503BF9E1  Disable Blur/Bloom
+Star Wars - Battlefront                              SLUS-20898  503BF9E1  Disable Blur/Bloom
+Star Wars - Battlefront II                           SLES-53501  02F4B541  Disable Blur/Bloom
+Star Wars - Battlefront II                           SLES-53501  B68D35CA  Disable Blur/Bloom
+Star Wars - Battlefront II                           SLUS-21240  02F4B541  Disable Blur/Bloom
+Star Wars - Battlefront II                           SLUS-21240  249540F3  Disable Blur/Bloom
+Tony Hawk's American Wasteland                       SLUS-21208  21278F5B  Remove blur effect
+Tony Hawk's American Wasteland [Collector's Edition] SLUS-21295  21278F5B  Remove blur effect
+World Rally Championship                             SLUS-20419  5838E074  Improved Performance
+X-Men 2 - Wolverine's Revenge                        SLES-51548  FBF2383B  Remove Blur
+アーマード・コア ナインブレイカー                                    SLPS-25408  5C4E1AC4  Remove Blur
+アーマード・コア ネクサス [DISC 1]                               SLPS-25338  26D1C561  Remove Blur
+アーマード・コア ネクサス [DISC 2]                               SLPS-25339  26D1C561  Remove Blur
+アーマード・コア フォーミュラフロント                                  SLPS-25461  3E26EEEB  Remove Blur
+アーマード・コア ラストレイヴン                                     SLPS-25462  FEBE1992  Remove Blur
+キングスフィールドⅣ                                           SLPS-25057  04C3765E  Remove Scanmask Blur
+グランド・セフト・オート：San Andreas                             SLPM-65984  60FE139C  Remove Ghosting Effects, Remove Color Filter
+グランド・セフト・オート：San Andreas [ROCKSTAR CLASSICS]         SLPM-55292  9E18263C  Remove Ghosting Effects, Remove Color Filter
+サイレントヒル シャッタードメモリーズ                                  SLPM-55231  F66FAFB2  No Noise Filter
+シャドウタワー アビス                                          SLPS-25217  38145680  Remove Scanmask Blur
+ドッグズライフ                                              SLPM-65995  08E89523  Disable Blur
+プリンス・オブ・ペルシャ ケンシ ノ ココロ                               SLPM-66002  6E90F4C1  Remove Blur/Bloom
+大神                                                   SLPM-66375  C5DEFEA0  Disable post-processing effect
+怪盗 スライ・クーパー                                          SCPS-15036  15C88C7B  No Motion Blur
+怪盗 スライ・クーパー [体験版]                                    PAPX-90231  9C29F787  No Motion Blur
+怪盗スライ・クーパー2                                          SCPS-15090  615EA2DB  No Motion Blur
+零 ～zero～                                             SLPS-25074  9883194E  Disable Blurry Bloom effect, Disable Post-Process and Noise effect
+零 ～刺青の聲～                                             SLPS-25544  3F651512  Disable Dither & Ghost Post-Process effect, Disable Overbloom on Cutscenes, Decrease Overbloom on Gameplay, Disable Focus effect, Disable All Bloom
+零 ～紅い蝶～                                              SLPS-25303  B292D14D  Disable Dither effect
+零 ～제로～                                               SCPS-56008  BCF04BF3  Disable Blurry Bloom effect, Disable Post-Process and Noise effect
+슬라이 쿠퍼 - 전설의 비법서를 찾아서                                SCKA-20004  71017DE1  No Motion Blur
+슬라이 쿠퍼 2 - 괴도 브라더스 대작전!                              SCKA-20044  518DD841  No Motion Blur
+슬라이 쿠퍼 3 - 최후의 대도                                    SCKA-20063  A8CC1583  No Motion Blur
+제로 ~붉은 나비~                                           SCKA-20023  56ABF4C6  Disable Dither effect, Disable Focus effect
+페르시아의 왕자                                             SLKA-25120  41C47E63  Remove Blur/Bloom

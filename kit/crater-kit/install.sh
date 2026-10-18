@@ -96,6 +96,7 @@ cp -r "$KIT/files/configgen" "$DEST/configgen"
 cp -r "$KIT/files/libretro-share" "$DEST/libretro-share"
 cp -f "$KIT/files/emulatorlauncher-armsx2" "$DEST/emulatorlauncher-armsx2"
 cp -f "$KIT/diag.sh" "$DEST/diag.sh"
+cp -f "$KIT/files/effect-patch-games.txt" "$DEST/effect-patch-games.txt" 2>/dev/null
 chmod 755 "$DEST/emulatorlauncher-armsx2" "$DEST/diag.sh"
 # the wrapper is a python script: sanity check that configgen accepts our generator
 $PY -c "
@@ -124,6 +125,7 @@ ROMs:  .iso .chd .cso .zso .bin/.cue .mdf .nrg .gz .elf   (CHD recommended - sma
 BIOS:  put your own PS2 BIOS dump(s) in /userdata/bios/ps2  (e.g. SCPH-70012 / SCPH-39001 .bin)
 Pick the emulator per game in EmulationStation: ARMSX2 (default) or LIBRETRO/ARMSX2.
 EOF
+cp -f "$KIT/files/effect-patch-games.txt" /userdata/roms/ps2/_effect-patch-games.txt 2>/dev/null
 mkdir -p /userdata/roms/ports
 cp -f "$KIT/diag.sh" "/userdata/roms/ports/Crater - PS2 and Arcade check.sh"
 chmod 755 "/userdata/roms/ports/Crater - PS2 and Arcade check.sh"

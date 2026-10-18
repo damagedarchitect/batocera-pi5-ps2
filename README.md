@@ -44,6 +44,30 @@ The Pi 5's CPU is the bottleneck, mostly for the main PS2 processor (the EE) and
 
 Tuning order: native resolution, Blending Accuracy Minimum, EE Cycle Rate 60–75%, MTVU on (default). For the heavy franchises, the PSP versions (GTA LCS/VCS, Midnight Club 3, Burnout Legends) run far better on this hardware.
 
+## Performance toolkit
+
+To find it, select a game, then go to **Advanced options → Performance toolkit**. Every option applies to that game only.
+
+| Option | What it does |
+|---|---|
+| **Performance profile** (Off / Light / Medium / Max) | A one-click preset. It only fills in options you haven't set yourself. |
+| **Effect removal patches** | Turns off motion blur, bloom, depth of field, fog and noise using the patches that ship with ARMSX2 (41 patch names, about 150 game versions). The game list is in [`kit/crater-kit/files/effect-patch-games.txt`](kit/crater-kit/files/effect-patch-games.txt). |
+| **EE cycle skip** (0–3) | The strongest CPU saver. It can cause stutter or the wrong game speed. |
+| **Hardware readbacks** | Accurate, Asynchronous, None or Disabled. GPU→CPU copies are expensive on the V3D GPU. |
+| **Skipdraw** | Drops the first draw calls of effect passes, for games without a patch. Raise it step by step. |
+
+| Profile | Effect patches | EE cycle rate | EE cycle skip | Blending | Readbacks |
+|---|---|---|---|---|---|
+| Light | on | 75% | 0 | Minimum | Asynchronous |
+| Medium | on | 60% | 1 | Minimum | Asynchronous |
+| Max | on | 50% | 2 | Minimum | None |
+
+Notes:
+
+- **PAL (50 Hz) versions** need about 17% less work than NTSC versions. Use them for borderline games.
+- **There are no "lower LOD / draw distance" patches** in the PCSX2/ARMSX2 patch database, so these toolkit options are the closest substitute.
+- **Patches match exact versions.** Each patch only applies to the exact version of a game (serial + CRC) it was written for.
+
 ## Arcade helper
 
 The kit also includes `diag.sh`, which appears in Ports as *Crater - PS2 and Arcade check*. It writes a report on the PS2, MAME, Naomi, Naomi 2 and Atomiswave setup. If most sampled MAME sets verify against MAME 0.285, it switches MAME's default core to the current MAME. It never overrides an explicit user choice, and it filters secrets out of the report.

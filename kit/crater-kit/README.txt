@@ -1,4 +1,4 @@
-CRATER KIT 1.0.2 - PS2 + arcade for Batocera 43.1 on Raspberry Pi 5
+CRATER KIT 1.0.3 - PS2 + arcade for Batocera 43.1 on Raspberry Pi 5
 =====================================================================
 
 WHAT IT DOES
@@ -44,6 +44,16 @@ REPAIR / REINSTALL FROM THE MENU (no SSH needed)
   Copy "Crater - Install or Repair PS2.sh" into \\BATOCERA\share\roms\ports and run it from
   Ports. It contains the whole kit, checks itself, reinstalls cleanly and restarts the menu.
 
+PERFORMANCE TOOLKIT (per game: select game -> Advanced options -> PERFORMANCE TOOLKIT)
+  PERFORMANCE PROFILE     Off / Light / Medium / Max - fills every option below you have not set
+  EFFECT REMOVAL PATCHES  motion blur / bloom / DoF / fog / noise off, about 150 game versions
+                          (list: \\BATOCERA\share\roms\ps2\_effect-patch-games.txt)
+  EE CYCLE SKIP           0-3, strongest CPU saver (may cause stutter / wrong game speed)
+  HARDWARE READBACKS      Accurate / Asynchronous / None / Disabled
+  SKIPDRAW                drop effect draw calls in games without a patch (raise step by step)
+  PAL versions run at 50 Hz = ~17% less work than NTSC: prefer them for borderline games.
+  There are no "lower LOD / draw distance" patches in the database; this is the closest you get.
+
 COMMANDS (SSH, root / linux)
   bash /boot/crater-kit/install.sh               re-install / repair
   bash /boot/crater-kit/install.sh --uninstall   remove (keeps saves/BIOS/ROMs, disables boot hook)
@@ -60,3 +70,7 @@ CHANGES 1.0.2
   * Single-file Ports installer/repair ("Crater - Install or Repair PS2.sh"), self-verifying (SHA-256).
   * install.sh can run from any unpacked copy (CRATER_KIT); reports still go to /boot/crater-kit/reports.
   * Uninstall also disables the boot hook so it does not reinstall itself at the next boot.
+
+CHANGES 1.0.3
+  * Performance toolkit: profiles, effect-removal patches (41 patch names / about 150 game versions),
+    EE cycle skip, hardware readback mode, skipdraw - all per game from the EmulationStation menu.

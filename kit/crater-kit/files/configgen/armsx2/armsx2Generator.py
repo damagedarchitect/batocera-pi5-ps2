@@ -41,6 +41,30 @@ _PCSX2_RESOURCES_DIR: Final = _PCSX2_BIN_DIR / "resources"
 _PCSX2_CONFIG: Final = CONFIGS / "ARMSX2"
 _PCSX2_BIOS: Final = BIOS / "ps2"
 
+# Crater performance toolkit: names of the "turn an effect off" patches that ship in ARMSX2's
+# patches.zip (141 game serials). Enabling a name only does something in a game whose patch
+# file has a group with exactly that name, so the list is safe to enable for every game.
+_CRATER_EFFECT_PATCHES: Final = (
+    "Remove Blur/Bloom", "Remove Blur", "No Motion Blur", "Disable Blur/Bloom", "Remove Ghosting Effects",
+    "Remove Color Filter", "Disable Blur", "Disable Dither effect", "No Noise Filter", "Disable Depth of Field",
+    "Remove Bloom", "Disable Blurry Bloom effect", "Remove Scanmask Blur", "Performance Fix", "Disable Bloom",
+    "No Blur While Reload", "Disable Motion Blur", "Disable Noise Effect", "Disable Focus effect",
+    "Disable Post-Process and Noise effect", "Fix Metro Slowdown", "Disable Overbloom on Cutscenes",
+    "Disable Motion Blur Effect", "Disable post-processing effect", "Remove blur", "Disable All Post-processing",
+    "No Distant Fog", "Disable Dither & Ghost Post-Process effect", "Decrease Overbloom on Gameplay",
+    "Disable All Bloom", "Remove blur effect", "Disable Post-Effects", "No Shadow Effects", "Disable Noise Filter",
+    "Disable Post-Process and Noise effect - gameplay", "Disable Post-Process and Noise effect - menus",
+    "Disable blur", "Improved Performance", "No Radial Blur", "Disable Fog", "Disable motion blur",
+)
+
+# Performance profiles: values used for any option the user has NOT set for the game.
+#   key: (effect patches, EE cycle rate, EE cycle skip, blending accuracy, hardware readbacks)
+_CRATER_PROFILES: Final = {
+    "light":  ("1", "-1", "0", "0", "5"),   # readbacks 5 = asynchronous
+    "medium": ("1", "-2", "1", "0", "5"),
+    "max":    ("1", "-3", "2", "0", "2"),   # readbacks 2 = none (can break some effects)
+}
+
 class Armsx2Generator(Generator):
 
     wheelTypeMapping: ClassVar = {
@@ -231,7 +255,16 @@ def configureINI(config_directory: Path, bios_directory: Path, system: Emulator,
     pcsx2INIConfig = CaseSensitiveConfigParser(interpolation=None)
 
     if configFileName.is_file():
-        pcsx2INIConfig.read(configFileName)
+        # [Patches] holds repeated "Enable = ..." lines (a string list), which configparser
+        # cannot parse; the section is fully regenerated below, so drop it before parsing.
+        _ini_text = configFileName.read_text(errors="replace")
+        _kept, _skip = [], False
+        for _line in _ini_text.splitlines():
+            if _line.strip().startswith("[") and _line.strip().endswith("]"):
+                _skip = _line.strip() == "[Patches]"
+            if not _skip:
+                _kept.append(_line)
+        pcsx2INIConfig.read_string("\n".join(_kept) + "\n")
 
     ## [UI]
     if not pcsx2INIConfig.has_section("UI"):
@@ -387,7 +420,28 @@ def configureINI(config_directory: Path, bios_directory: Path, system: Emulator,
     pcsx2INIConfig.set("EmuCore/GS", "IntegerScaling", system.config.get("armsx2_scaling", "false"))
 
     # Blending Accuracy
-    pcsx2INIConfig.set("EmuCore/GS", "accurate_blending_unit", system.config.get("armsx2_blending", "1"))
+    _profile = _CRATER_PROFILES.get(system.config.get("armsx2_perf_profile", "off") or "off")
+    def _perf(key: str, idx: int, default: str) -> str:
+        value = system.config.get(key, None)   # unset keys return a MISSING sentinel without a default
+        if value not in (None, ""):
+            return str(value)
+        return _profile[idx] if _profile else default
+
+    pcsx2INIConfig.set("EmuCore/GS", "accurate_blending_unit", _perf("armsx2_blending", 3, "1"))
+
+    # Hardware readbacks (GPU->CPU copies; costly on the Pi 5's V3D)
+    pcsx2INIConfig.set("EmuCore/GS", "HWDownloadMode", _perf("armsx2_readbacks", 4, "0"))
+
+    # Skipdraw: drop a range of draw calls (removes heavy effects in some games; too high hides the world)
+    skipdraw = system.config.get("armsx2_skipdraw", "0") or "0"
+    if skipdraw != "0":
+        pcsx2INIConfig.set("EmuCore/GS", "UserHacks", "true")
+        pcsx2INIConfig.set("EmuCore/GS", "UserHacks_SkipDraw_Start", "1")
+        pcsx2INIConfig.set("EmuCore/GS", "UserHacks_SkipDraw_End", skipdraw)
+    else:
+        pcsx2INIConfig.set("EmuCore/GS", "UserHacks", "false")
+        pcsx2INIConfig.set("EmuCore/GS", "UserHacks_SkipDraw_Start", "0")
+        pcsx2INIConfig.set("EmuCore/GS", "UserHacks_SkipDraw_End", "0")
 
     # Texture Filtering
     pcsx2INIConfig.set("EmuCore/GS", "filter", system.config.get("armsx2_texture_filtering", "2"))
@@ -425,7 +479,8 @@ def configureINI(config_directory: Path, bios_directory: Path, system: Emulator,
     if not pcsx2INIConfig.has_section("EmuCore/Speedhacks"):
         pcsx2INIConfig.add_section("EmuCore/Speedhacks")
     pcsx2INIConfig.set("EmuCore/Speedhacks", "vuThread", system.config.get_bool("armsx2_vuthread", True, return_values=("true", "false")))
-    pcsx2INIConfig.set("EmuCore/Speedhacks", "EECycleRate", system.config.get("armsx2_eecyclerate", "0"))
+    pcsx2INIConfig.set("EmuCore/Speedhacks", "EECycleRate", _perf("armsx2_eecyclerate", 1, "0"))
+    pcsx2INIConfig.set("EmuCore/Speedhacks", "EECycleSkip", _perf("armsx2_eecycleskip", 2, "0"))
 
     ## [InputSources]
     if not pcsx2INIConfig.has_section("InputSources"):
@@ -741,6 +796,11 @@ def configureINI(config_directory: Path, bios_directory: Path, system: Emulator,
 
     with configFileName.open('w') as configfile:
         pcsx2INIConfig.write(configfile)
+        if _perf("armsx2_effect_patches", 0, "0") == "1":
+            configfile.write("[Patches]\n")
+            for _name in _CRATER_EFFECT_PATCHES:
+                configfile.write(f"Enable = {_name}\n")
+            configfile.write("\n")
 
 def input2wheel(input: Input, reversedAxis: bool | None = False) -> str | None:
     if input.type == "button":
