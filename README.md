@@ -55,12 +55,16 @@ To find it, select a game, then go to **Advanced options → Performance toolkit
 | **EE cycle skip** (0–3) | The strongest CPU saver. It can cause stutter or the wrong game speed. |
 | **Hardware readbacks** | Accurate, Asynchronous, None or Disabled. GPU→CPU copies are expensive on the V3D GPU. |
 | **Skipdraw** | Drops the first draw calls of effect passes, for games without a patch. Raise it step by step. |
+| **Thread pinning** | Pins the emulator's threads to fixed cores, a small free gain on the Pi 5's 4 identical cores. |
+| **Audio reverb / Audio sync** | Skips the PS2 reverb effect (ARMSX2's lightweight audio mode), and turns off time-stretching. Faster, but audio may crackle when the game slows down. |
 
-| Profile | Effect patches | EE cycle rate | EE cycle skip | Blending | Readbacks |
+| Profile | EE cycle rate | EE cycle skip | Readbacks | Audio reverb | Audio sync |
 |---|---|---|---|---|---|
-| Light | on | 75% | 0 | Minimum | Asynchronous |
-| Medium | on | 60% | 1 | Minimum | Asynchronous |
-| Max | on | 50% | 2 | Minimum | None |
+| Light | 75% | 0 | Asynchronous | on | TimeStretch |
+| Medium | 60% | 1 | Asynchronous | off | TimeStretch |
+| Max | 50% | 2 | None | off | Disabled |
+
+Every profile also turns on effect patches and thread pinning, sets blending to Minimum, and switches the CPU governor to `performance` while the game runs. The governor change only happens when no power mode is set for the game or system, and it's restored when the game exits.
 
 Notes:
 

@@ -57,12 +57,28 @@ _CRATER_EFFECT_PATCHES: Final = (
     "Disable blur", "Improved Performance", "No Radial Blur", "Disable Fog", "Disable motion blur",
 )
 
-# Performance profiles: values used for any option the user has NOT set for the game.
-#   key: (effect patches, EE cycle rate, EE cycle skip, blending accuracy, hardware readbacks)
+# Performance profiles: values used for any option the user has NOT set for this game.
 _CRATER_PROFILES: Final = {
-    "light":  ("1", "-1", "0", "0", "5"),   # readbacks 5 = asynchronous
-    "medium": ("1", "-2", "1", "0", "5"),
-    "max":    ("1", "-3", "2", "0", "2"),   # readbacks 2 = none (can break some effects)
+    "light": {
+        "effect_patches": "1", "eecyclerate": "-1", "eecycleskip": "0", "blending": "0",
+        "readbacks": "5",            # 5 = asynchronous
+        "threadpinning": "true",     # pin EE/VU/GS threads to the Pi 5's 4 identical cores
+        "audio_lite": "false", "audio_sync": "TimeStretch",
+        "powermode": "highperformance",  # CPU governor "performance" while the game runs
+    },
+    "medium": {
+        "effect_patches": "1", "eecyclerate": "-2", "eecycleskip": "1", "blending": "0",
+        "readbacks": "5", "threadpinning": "true",
+        "audio_lite": "true",        # skip the SPU2 reverb pipeline (ARMSX2 low-end lever)
+        "audio_sync": "TimeStretch", "powermode": "highperformance",
+    },
+    "max": {
+        "effect_patches": "1", "eecyclerate": "-3", "eecycleskip": "2", "blending": "0",
+        "readbacks": "2",            # 2 = no readbacks (can break some effects)
+        "threadpinning": "true", "audio_lite": "true",
+        "audio_sync": "Disabled",    # no time-stretching: less CPU, audio may crackle when slow
+        "powermode": "highperformance",
+    },
 }
 
 class Armsx2Generator(Generator):
@@ -421,16 +437,16 @@ def configureINI(config_directory: Path, bios_directory: Path, system: Emulator,
 
     # Blending Accuracy
     _profile = _CRATER_PROFILES.get(system.config.get("armsx2_perf_profile", "off") or "off")
-    def _perf(key: str, idx: int, default: str) -> str:
+    def _perf(key: str, field: str, default: str) -> str:
         value = system.config.get(key, None)   # unset keys return a MISSING sentinel without a default
         if value not in (None, ""):
             return str(value)
-        return _profile[idx] if _profile else default
+        return _profile[field] if _profile else default
 
-    pcsx2INIConfig.set("EmuCore/GS", "accurate_blending_unit", _perf("armsx2_blending", 3, "1"))
+    pcsx2INIConfig.set("EmuCore/GS", "accurate_blending_unit", _perf("armsx2_blending", "blending", "1"))
 
     # Hardware readbacks (GPU->CPU copies; costly on the Pi 5's V3D)
-    pcsx2INIConfig.set("EmuCore/GS", "HWDownloadMode", _perf("armsx2_readbacks", 4, "0"))
+    pcsx2INIConfig.set("EmuCore/GS", "HWDownloadMode", _perf("armsx2_readbacks", "readbacks", "0"))
 
     # Skipdraw: drop a range of draw calls (removes heavy effects in some games; too high hides the world)
     skipdraw = system.config.get("armsx2_skipdraw", "0") or "0"
@@ -479,8 +495,26 @@ def configureINI(config_directory: Path, bios_directory: Path, system: Emulator,
     if not pcsx2INIConfig.has_section("EmuCore/Speedhacks"):
         pcsx2INIConfig.add_section("EmuCore/Speedhacks")
     pcsx2INIConfig.set("EmuCore/Speedhacks", "vuThread", system.config.get_bool("armsx2_vuthread", True, return_values=("true", "false")))
-    pcsx2INIConfig.set("EmuCore/Speedhacks", "EECycleRate", _perf("armsx2_eecyclerate", 1, "0"))
-    pcsx2INIConfig.set("EmuCore/Speedhacks", "EECycleSkip", _perf("armsx2_eecycleskip", 2, "0"))
+    pcsx2INIConfig.set("EmuCore/Speedhacks", "EECycleRate", _perf("armsx2_eecyclerate", "eecyclerate", "0"))
+    pcsx2INIConfig.set("EmuCore/Speedhacks", "EECycleSkip", _perf("armsx2_eecycleskip", "eecycleskip", "0"))
+
+    # Thread pinning (EmuCore)
+    pcsx2INIConfig.set("EmuCore", "EnableThreadPinning", _perf("armsx2_threadpinning", "threadpinning", "false"))
+
+    ## [SPU2/Output] - audio CPU cost
+    if not pcsx2INIConfig.has_section("SPU2/Output"):
+        pcsx2INIConfig.add_section("SPU2/Output")
+    pcsx2INIConfig.set("SPU2/Output", "LightweightMode", _perf("armsx2_audio_lite", "audio_lite", "false"))
+    pcsx2INIConfig.set("SPU2/Output", "SyncMode", _perf("armsx2_audio_sync", "audio_sync", "TimeStretch"))
+
+    # CPU governor: Batocera's gameStart hook has already applied the user's power mode before
+    # this generator runs; a profile only raises it when no power mode is set for the game/system.
+    if _profile and system.config.get("powermode", None) in (None, ""):
+        try:
+            import subprocess
+            subprocess.run(["/usr/bin/batocera-power-mode", _profile["powermode"]], timeout=10, check=False)
+        except Exception as exc:  # never block the game launch over this
+            _logger.warning("could not set power mode: %s", exc)
 
     ## [InputSources]
     if not pcsx2INIConfig.has_section("InputSources"):
@@ -796,7 +830,7 @@ def configureINI(config_directory: Path, bios_directory: Path, system: Emulator,
 
     with configFileName.open('w') as configfile:
         pcsx2INIConfig.write(configfile)
-        if _perf("armsx2_effect_patches", 0, "0") == "1":
+        if _perf("armsx2_effect_patches", "effect_patches", "0") == "1":
             configfile.write("[Patches]\n")
             for _name in _CRATER_EFFECT_PATCHES:
                 configfile.write(f"Enable = {_name}\n")

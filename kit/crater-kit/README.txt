@@ -1,4 +1,4 @@
-CRATER KIT 1.0.3 - PS2 + arcade for Batocera 43.1 on Raspberry Pi 5
+CRATER KIT 1.0.4 - PS2 + arcade for Batocera 43.1 on Raspberry Pi 5
 =====================================================================
 
 WHAT IT DOES
@@ -51,6 +51,10 @@ PERFORMANCE TOOLKIT (per game: select game -> Advanced options -> PERFORMANCE TO
   EE CYCLE SKIP           0-3, strongest CPU saver (may cause stutter / wrong game speed)
   HARDWARE READBACKS      Accurate / Asynchronous / None / Disabled
   SKIPDRAW                drop effect draw calls in games without a patch (raise step by step)
+  THREAD PINNING          pin emulator threads to fixed cores (small free gain)
+  AUDIO REVERB / SYNC     skip PS2 reverb; disable time-stretching (faster, may crackle)
+  Profiles also switch the CPU governor to performance while the game runs
+  (only when no power mode is set for the game/system; restored when the game exits).
   PAL versions run at 50 Hz = ~17% less work than NTSC: prefer them for borderline games.
   There are no "lower LOD / draw distance" patches in the database; this is the closest you get.
 
@@ -74,3 +78,7 @@ CHANGES 1.0.2
 CHANGES 1.0.3
   * Performance toolkit: profiles, effect-removal patches (41 patch names / about 150 game versions),
     EE cycle skip, hardware readback mode, skipdraw - all per game from the EmulationStation menu.
+
+CHANGES 1.0.4
+  * Toolkit: thread pinning, audio reverb off (ARMSX2 lightweight mode), audio sync mode,
+    and CPU governor 'performance' during play for every profile (unless a power mode is set).
